@@ -1,0 +1,15 @@
+Per-device and per-account limits
+Real-time Data: 60 requests per minute
+Wakes: 3 requests per minute
+Device Commands: 30 requests per minute 
+Authentication requests
+Rate: 20 requests per second
+Note: Exceeding this rate may lead to throttling or blocking. 
+Shared limits
+An account with multiple developer applications interacting with the same vehicle will share these rate limits. 
+Error handling
+If you hit a rate limit, you will receive an HTTP status code 429 Too Many Requests.
+You can check the Retry-After header in the response to know when you can make the next request, or use the RateLimit--Remaining and RateLimit-*-Reset headers for more information. 
+Other considerations
+Streaming data: Tesla also offers a "Fleet Telemetry" method, which uses a streaming approach instead of polling. This is often the preferred method and may avoid some polling-related rate limits, as described in this Reddit thread.
+Cost: Note that using the Fleet API is a paid service, though some free credits are available for personal use. Check Tesla's developer site for current pricing and details. 
