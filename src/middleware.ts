@@ -30,8 +30,10 @@ function isRateLimited(ip: string) {
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth
-  const isAuthPage = req.nextUrl.pathname.startsWith("/login")
+  const isDashboard = req.nextUrl.pathname.startsWith("/dashboard")
+  const isRoot = req.nextUrl.pathname === "/"
   const isApiAuthRoute = req.nextUrl.pathname.startsWith("/api/auth")
+  const isWellKnown = req.nextUrl.pathname.startsWith("/.well-known")
   const isPublicResource = req.nextUrl.pathname.match(/\.(svg|png|jpg|jpeg|gif|webp)$/)
 
   // Rate Limiting
@@ -40,25 +42,24 @@ export default auth((req) => {
     return new NextResponse("Too Many Requests", { status: 429 })
   }
 
-  // Auth Logic
-  if (isApiAuthRoute || isPublicResource) {
+  // Allow public routes
+  if (isApiAuthRoute || isPublicResource || isWellKnown) {
     return NextResponse.next()
   }
 
-  if (isAuthPage) {
-    if (isLoggedIn) {
-      return Response.redirect(new URL("/", req.nextUrl))
-    }
-    return NextResponse.next()
+  // Protect dashboard
+  if (isDashboard && !isLoggedIn) {
+    return Response.redirect(new URL("/", req.nextUrl))
   }
 
-  if (!isLoggedIn) {
-    return Response.redirect(new URL("/login", req.nextUrl))
+  // Redirect logged-in users to dashboard
+  if (isRoot && isLoggedIn) {
+    return Response.redirect(new URL("/dashboard", req.nextUrl))
   }
 
   return NextResponse.next()
 })
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.well-known).*)"],
 }

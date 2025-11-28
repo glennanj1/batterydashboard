@@ -14,7 +14,7 @@ try {
 async function register() {
   const clientId = process.env.TESLA_CLIENT_ID
   const clientSecret = process.env.TESLA_CLIENT_SECRET
-  const domain = "batterydashboard.vercel.app" // Or your actual domain
+  const domain = "batterydashboard.techbridge.dev" // Your actual domain
 
   if (!clientId || !clientSecret) {
     console.error("Missing TESLA_CLIENT_ID or TESLA_CLIENT_SECRET env vars")
